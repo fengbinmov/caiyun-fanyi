@@ -3,7 +3,7 @@
   "displayName": "彩云翻译 · Markdown 预览",
   "description": "在 Markdown 预览里一键把中文翻译成英文（基于彩云小译）",
   "version": "1.0.0",
-  "publisher": "local",
+  "publisher": "fenbinmov",
   "license": "MIT",
   "icon": "media/icon.png",
   "repository": {
