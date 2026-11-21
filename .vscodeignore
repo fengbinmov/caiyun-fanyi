@@ -6,10 +6,15 @@ src/**
 scripts/**
 node_modules/**
 out/**
+# README 里的截图由 Marketplace 从 GitHub 加载，不必打进包
+examples/*.jpg
+examples/*.png
+examples/*.gif
 **/*.ts
 **/*.map
 esbuild.js
 tsconfig.json
 .gitignore
+.gitattributes
 .editorconfig
 **/.DS_Store
