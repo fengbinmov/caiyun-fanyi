@@ -1,0 +1,192 @@
+{
+  "name": "caiyun-fanyi",
+  "displayName": "彩云翻译 · Markdown 预览",
+  "description": "在 Markdown 预览里一键把中文翻译成英文（基于彩云小译）",
+  "version": "1.0.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "translate",
+    "caiyun",
+    "translation"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "caiyunFanyi.translated",
+        "displayName": "彩云译文预览",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          },
+          {
+            "filenamePattern": "*.markdown"
+          }
+        ],
+        "priority": "option"
+      },
+      {
+        "viewType": "caiyunFanyi.bilingual",
+        "displayName": "彩云双语预览",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          },
+          {
+            "filenamePattern": "*.markdown"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
+    "commands": [
+      {
+        "command": "caiyunFanyi.toggleTranslatedPreview",
+        "title": "切换译文 / 原文预览",
+        "category": "彩云翻译",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "caiyunFanyi.showTranslatedPreview",
+        "title": "显示译文预览",
+        "category": "彩云翻译",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "caiyunFanyi.showBilingualPreview",
+        "title": "显示双语预览",
+        "category": "彩云翻译",
+        "icon": "$(split-horizontal)"
+      },
+      {
+        "command": "caiyunFanyi.showSourcePreview",
+        "title": "恢复原文预览",
+        "category": "彩云翻译",
+        "icon": "$(book)"
+      },
+      {
+        "command": "caiyunFanyi.setToken",
+        "title": "设置 API Token",
+        "category": "彩云翻译"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "caiyunFanyi.showSourcePreview",
+          "when": "editorLangId == markdown || !editorLangId",
+          "group": "caiyun@1"
+        },
+        {
+          "command": "caiyunFanyi.showTranslatedPreview",
+          "when": "true",
+          "group": "caiyun@9"
+        },
+        {
+          "command": "caiyunFanyi.showBilingualPreview",
+          "when": "true",
+          "group": "caiyun@10"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "caiyunFanyi.showTranslatedPreview",
+          "when": "editorLangId == markdown",
+          "group": "navigation@100"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "caiyunFanyi.showTranslatedPreview",
+          "when": "resourceExtname == .md",
+          "group": "navigation@100"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "彩云翻译",
+      "properties": {
+        "caiyunFanyi.token": {
+          "type": "string",
+          "default": "",
+          "scope": "application",
+          "markdownDescription": "彩云小译 API Token。**推荐使用命令「彩云翻译: 设置 API Token」保存到加密存储**（`SecretStorage`），此处填写的值仅作为兜底。"
+        },
+        "caiyunFanyi.transType": {
+          "type": "string",
+          "enum": [
+            "en2zh",
+            "auto2zh",
+            "zh2en",
+            "auto2en",
+            "en2zh-Hant",
+            "zh2ja",
+            "zh2ko",
+            "zh2zh-Hant",
+            "ja2zh",
+            "ko2zh",
+            "de2zh",
+            "fr2zh",
+            "ru2zh"
+          ],
+          "enumDescriptions": [
+            "英文 → 中文",
+            "自动检测 → 中文",
+            "中文 → 英文",
+            "自动检测 → 英文",
+            "英文 → 繁体中文",
+            "中文 → 日文",
+            "中文 → 韩文",
+            "中文 → 繁体中文",
+            "日文 → 中文",
+            "韩文 → 中文",
+            "德文 → 中文",
+            "法文 → 中文",
+            "俄文 → 中文"
+          ],
+          "default": "en2zh",
+          "markdownDescription": "翻译方向，透传为彩云接口的 `trans_type` 参数。默认把英文译成中文。"
+        },
+        "caiyunFanyi.endpoint": {
+          "type": "string",
+          "default": "https://api.interpreter.caiyunai.com/v1/translator",
+          "markdownDescription": "彩云小译接口地址。官方地址调整时可在此修改。"
+        },
+        "caiyunFanyi.batchSize": {
+          "type": "number",
+          "default": 8,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "每批请求携带的文本段数，过大可能触发接口限流。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node scripts/markdown-check.mjs && node scripts/translator-check.mjs && node scripts/stream-check.mjs",
+    "test:integration": "npm run build && vscode-test",
+    "vscode:prepublish": "npm run build",
+    "package": "npm run build && npx vsce package --no-dependencies --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.0",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.7.2"
+  }
+}

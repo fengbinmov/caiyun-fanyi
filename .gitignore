@@ -1,0 +1,15 @@
+# 依赖与构建产物（npm install / npm run build 即可重建）
+node_modules/
+dist/
+out/
+
+# 打包产物
+*.vsix
+
+# 集成测试下载的独立 VS Code 实例（约 200MB）
+.vscode-test/
+
+# 系统杂项
+.DS_Store
+Thumbs.db
+*.log
